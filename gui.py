@@ -11,6 +11,13 @@ import subprocess
 import shutil
 
 
+#global
+
+chapterButtonNames = ["Download Chapter","Download all Chapters","Read Chapter(not save)"]
+chapterButtonWidgets = []
+currentChapterLink = ""
+currentMangaName = ""
+
 
 if not os.path.isfile('linkFile.txt'):
 	print "Loading Manga's"
@@ -52,7 +59,9 @@ def onSelect(*args):
 		status.config(text="Fetching information")
 		downloadImage(mangaLink)
 	else:
-		imageUpdate(mangaLink)
+		imageUpdate(mangaLink)	
+	global currentMangaName
+	currentMangaName = imageName
 	getChapterList(mangaLink,imageName)
 
 
@@ -75,9 +84,6 @@ def updateOptionMenu():
 	for chapters in chapterDict:
 		chapterOptionMenu['menu'].add_command(label=chapters,command=lambda chapters = chapters:chapterSelected.set(chapters))
 
-chapterButtonNames = ["Download Chapter","Download all Chapters","Read Chapter(not save)"]
-chapterButtonWidgets = []
-currentChapterLink = ""
 
 def onChapterSelected(*args):
 	global chapterDict
@@ -110,14 +116,11 @@ mangaImageLinks = []
 
 def downloadChapter():
 	global chapterButtonWidgets
-	if(len(currentChapterLink)!=0):
-		html = req.get(currentChapterLink)
-		soup = BeautifulSoup(html.text)
-		select = soup.find(id="pageMenu")
-		options = select.find_all('options')
-	#	lastPage = options[-1].text.encode('utf-8')
-		for option in options:
-			mangaImageLinks.append(option.get('value'))
+	global currentChapterLink
+	global currentMangaName
+	command = 'python chapterDownloader.py '+currentChapterLink+' '+currentMangaName
+
+	p = subprocess.Popen(command,shell=True)
 
 
 
@@ -168,6 +171,7 @@ def imageUpdate(mangaLink):
 	getSummary(mangaLink)
 
 def getSummary(mangaLink):
+	
 	try:
 		html = req.get(mangaLink)
 	except req.exceptions.RequestException as e:
