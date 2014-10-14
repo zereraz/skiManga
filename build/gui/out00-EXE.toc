@@ -1,0 +1,9 @@
+('/Users/balvindersingh/Documents/python/mangaReader/build/gui/gui',
+ True,
+ False,
+ None,
+ None,
+ [],
+ None,
+ False,
+ 1413278396)

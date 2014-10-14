@@ -1,1 +1,0 @@
-{'Robotics;Notes 1': 'http://mangareader.net/roboticsnotes/1', 'Robotics;Notes 2': 'http://mangareader.net/roboticsnotes/2'}
