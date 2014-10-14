@@ -35,7 +35,8 @@ def chapterInfo(chapterLink, mangaName, chapterNumber, progressBar):
 def imagesDownloadLinks(progressBar, mangaName, chapterNumber):
 	global imagePageLinks
 	global maxPageNo	
-	progIncrease = (500/maxPageNo-1)	
+	global done
+	progIncrease = (500/maxPageNo)	
 	path = os.path.dirname(os.path.abspath(__file__))+'/temp/Downloads/'+mangaName+'/'+chapterNumber+'/'
 	for idx,link in enumerate(imagePageLinks):		
 		html = req.get(link)
@@ -45,6 +46,8 @@ def imagesDownloadLinks(progressBar, mangaName, chapterNumber):
 		imageLink = imageLink.get('src')
 		imageLinks.append(imageLink)		
 		progressBar["value"]+= progIncrease
+		done.set(str((progressBar["value"]*100)/500)+" %")
+
 		try:
 			imagePage = req.get(imageLink)			
 			image = PIL.Image.open(StringIO(imagePage.content))			
@@ -75,11 +78,17 @@ if len(arguments) == 3:
 	mangaName = arguments[2]
 	chapterNumber = chapterLink.split('/')[-1]
 	root = Tk()
+	root.title(mangaName+" "+chapterNumber)
+	done = StringVar()	
+	done.set("0 %")
+	howMuchDone = Label(root, textvariable=done,background="white")
+	howMuchDone.pack(side=TOP)
 	progressBar = Progressbar(root,orient="horizontal",mode="determinate",length=500,maximum=500)	
 	progressBar.pack()
 	t = threading.Thread(target=chapterInfo,args = (chapterLink, mangaName, chapterNumber, progressBar))		
 	t.daemon = True
 	t.start()
+	root.lift()
 	root.mainloop()
 	quit()
 	

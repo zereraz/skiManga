@@ -1,0 +1,1 @@
+{'My Little Lover 5': 'http://mangareader.net/my-little-lover/5', 'My Little Lover 4': 'http://mangareader.net/my-little-lover/4', 'My Little Lover 1': 'http://mangareader.net/my-little-lover/1', 'My Little Lover 3': 'http://mangareader.net/my-little-lover/3', 'My Little Lover 2': 'http://mangareader.net/my-little-lover/2'}

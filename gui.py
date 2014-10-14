@@ -9,7 +9,7 @@ import os
 import tkMessageBox
 import subprocess
 import shutil
-
+import threading
 
 #global
 
@@ -62,7 +62,11 @@ def onSelect(*args):
 		imageUpdate(mangaLink)	
 	global currentMangaName
 	currentMangaName = imageName
-	getChapterList(mangaLink,imageName)
+	path = os.path.dirname(os.path.abspath(__file__))+'/temp/'+imageName+'/chapters.txt'
+	if not os.path.exists(path):
+		getChapterList(mangaLink,imageName)
+	else:
+		updateChapterList(imageName)
 
 
 def getChapterList(mangaLink, mangaName):
@@ -70,13 +74,21 @@ def getChapterList(mangaLink, mangaName):
 	command = "python chapterGetter.py "+mangaLink+' '+mangaName
 	p = subprocess.Popen(command,shell=True)
 	p.wait()
-
+		
 	with open(path+'/temp/'+mangaName+'/chapters.txt','r') as f:
 		status.config(text="getting chapter list for manga")
 		chapterDict = eval(f.read())
-		
+
 	chapterSelected.set(chapterDict.keys()[0])
 	updateOptionMenu()
+
+def updateChapterList(mangaName):
+	global chapterDict	
+	with open(path+'/temp/'+mangaName+'/chapters.txt','r') as f:
+		status.config(text="getting chapter list for manga")
+		chapterDict = eval(f.read())
+		chapterSelected.set(chapterDict.keys()[0])
+		updateOptionMenu()
 
 def updateOptionMenu():
 	global chapterDict
@@ -118,17 +130,31 @@ def downloadChapter():
 	global chapterButtonWidgets
 	global currentChapterLink
 	global currentMangaName
-	command = 'python chapterDownloader.py '+currentChapterLink+' '+currentMangaName
+	if(len(currentMangaName)!=0):
+		status.config(text="Downloading "+str(currentMangaName))
+		command = 'python chapterDownloader.py '+currentChapterLink+' '+currentMangaName
+		p = subprocess.Popen(command,shell=True)
+	else:
+		status.config(text="Manga Not Selected")
 
-	p = subprocess.Popen(command,shell=True)
 
-
-
-def downloadAllChapters():			
-	print "B"
-
+def downloadAllChapters():
+	global currentMangaName
+	if(len(currentMangaName)!=0):
+		print "A"
+	else:
+		status.config(text="Manga Not Selected")
 def readThisChapter():
-	print "A"
+	global currentChapterLink
+	global currentMangaName
+	if(len(currentMangaName)!=0):
+		folderName = currentChapterLink.split('/')[-1]
+		command = 'python imageViewer.py '+folderName+' '+currentMangaName
+		p = subprocess.Popen(command,shell=True)
+	else:
+		status.config(text="Manga Not Selected")
+
+
 
 def downloadImage(mangaLink):
 	status.config(text="Getting information")
@@ -247,7 +273,8 @@ chapterSelected.trace("w", onChapterSelected)
 root.protocol('WM_DELETE_WINDOW', ask_quit)
 
 addButtons()
-
+w,h = root.winfo_screenwidth(), root.winfo_screenheight()	
+root.geometry("%dx%d+0+0"%(w,h))
 
 root.lift()
 root.mainloop()

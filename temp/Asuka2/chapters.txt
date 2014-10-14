@@ -1,0 +1,1 @@
+{'Asuka2 1': 'http://mangareader.net/asuka2/1', 'Asuka2 2': 'http://mangareader.net/asuka2/2'}
