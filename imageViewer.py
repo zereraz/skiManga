@@ -33,6 +33,7 @@ def nextImage():
 	global counter
 	global canvas
 	canvas.delete("all")
+	canvas.yview_moveto(0)
 	counter = (counter + 1)%len(imageContainers)
 	canvas.create_image(imageWidthList[counter],300,image=imageContainers[counter])
 	canvas.img = imageContainers[counter]
